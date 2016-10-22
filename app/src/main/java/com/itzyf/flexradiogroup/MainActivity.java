@@ -20,15 +20,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         frgLabel = (FlexRadioGroup) findViewById(R.id.frg_label);
+        int margin = DensityUtils.dp2px(this, 10);
         for (String price : filterPrices) {
             RadioButton rb = (RadioButton) getLayoutInflater().inflate(R.layout.item_label, null);
             rb.setText(price);
             FlexboxLayout.LayoutParams lp = new FlexRadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(15, 15, 15, 15);
+            lp.setMargins(margin, margin / 2, margin, margin / 2);
             rb.setLayoutParams(lp);
 
             frgLabel.addView(rb);
 
+            /**
+             * 下面两个监听器用于点击两次可以清除当前RadioButton的选中
+             * 点击RadioButton后，{@link FlexRadioGroup#OnCheckedChangeListener}先回调，然后再回调{@link View#OnClickListener}
+             * 如果当前的RadioButton已经被选中时，不会回调OnCheckedChangeListener方法，故判断没有回调该方法且当前RadioButton确实被选中时清除掉选中
+             */
             frgLabel.setOnCheckedChangeListener(new FlexRadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(@IdRes int checkedId) {
