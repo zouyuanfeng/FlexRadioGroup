@@ -72,10 +72,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         animExpand = AnimationUtils.loadAnimation(this, R.anim.expand);
         animExpand.setAnimationListener(this);
+        animExpand.setFillAfter(true);
 
         animCollapse = AnimationUtils.loadAnimation(this, R.anim.collapse);
         animCollapse.setAnimationListener(this);
-
+        animCollapse.setFillAfter(true);
 
     }
 
