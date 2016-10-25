@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">FlexRadioGroup</string>
+    <string name="app_name">筛选菜单</string>
+    <string name="filter">筛选</string>
 </resources>

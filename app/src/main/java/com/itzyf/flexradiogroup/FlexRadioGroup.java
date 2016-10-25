@@ -18,7 +18,7 @@ import com.google.android.flexbox.FlexboxLayout;
 public class FlexRadioGroup extends FlexboxLayout {
     private int mCheckedId = -1;
     private boolean mProtectFromCheckedChange = false;
-    private OnCheckedChangeListener mOnCheckedChangeListener;
+    private OnCheckedChangeListener mOnCheckedChangeListener; //RadioButton 更改状态时的监听
     private CompoundButton.OnCheckedChangeListener mChildOnCheckedChangeListener;
     private PassThroughHierarchyChangeListener mPassThroughListener;
 
@@ -39,9 +39,7 @@ public class FlexRadioGroup extends FlexboxLayout {
         super.setOnHierarchyChangeListener(mPassThroughListener);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void setOnHierarchyChangeListener(OnHierarchyChangeListener listener) {
         // the user listener is delegated to our pass-through listener
@@ -65,6 +63,12 @@ public class FlexRadioGroup extends FlexboxLayout {
         super.addView(child, index, params);
     }
 
+    /**
+     * 设置Checked状态到View中
+     *
+     * @param viewId
+     * @param checked
+     */
     private void setCheckedStateForView(int viewId, boolean checked) {
         View checkedView = findViewById(viewId);
         if (checkedView != null && checkedView instanceof RadioButton) {
@@ -108,6 +112,16 @@ public class FlexRadioGroup extends FlexboxLayout {
         public void onCheckedChanged(@IdRes int checkedId);
     }
 
+    @IdRes
+    public int getCheckedRadioButtonId() {
+        return mCheckedId;
+    }
+
+
+    /**
+     * 此监听器在{@link PassThroughHierarchyChangeListener#onChildViewAdded}中设置了监听
+     * 当RadioButton被点击时调用{@link CheckedStateTracker#onCheckedChanged}方法
+     */
     private class CheckedStateTracker implements CompoundButton.OnCheckedChangeListener {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             // prevents from infinite recursion
@@ -116,7 +130,7 @@ public class FlexRadioGroup extends FlexboxLayout {
             }
 
             mProtectFromCheckedChange = true;
-            if (mCheckedId != -1) {
+            if (mCheckedId != -1) {//把原来选中的Check设置为false
                 setCheckedStateForView(mCheckedId, false);
             }
             mProtectFromCheckedChange = false;
@@ -126,21 +140,31 @@ public class FlexRadioGroup extends FlexboxLayout {
         }
     }
 
+    /**
+     * 当布局添加或者删除View时的监听器
+     */
     private class PassThroughHierarchyChangeListener implements
             ViewGroup.OnHierarchyChangeListener {
         private ViewGroup.OnHierarchyChangeListener mOnHierarchyChangeListener;
 
         /**
-         * {@inheritDoc}
+         * 子View添加时，调用此方法
          */
         public void onChildViewAdded(View parent, View child) {
-            if (parent == FlexRadioGroup.this && child instanceof RadioButton) {
+            if (parent == FlexRadioGroup.this && child instanceof RadioButton) { //如果子View没有Id，则生产一个id给view
                 int id = child.getId();
                 // generates an id if it's missing
                 if (id == View.NO_ID) {
                     id = ViewIdGenerator.generateViewId();
                     child.setId(id);
                 }
+                //
+                /**
+                 *原RadioGroup中调用的是{@link RadioButton#setOnCheckedChangeWidgetListener}
+                 * 但由于被隐藏，无法调用，反射也无法找到，故此使用{@link  RadioButton#setOnCheckedChangeListener }
+                 * 造成的后果就是子view中不能再去使用{@link  RadioButton#setOnCheckedChangeListener }监听器
+                 */
+
                 ((RadioButton) child).setOnCheckedChangeListener(
                         mChildOnCheckedChangeListener);
             }

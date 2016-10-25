@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!--actionbar-->
+    <color name="colorPrimary">#2196F3</color><!--状态栏-->
+    <color name="colorPrimaryDark">#1976D2</color><!--UI控件色调-->
+    <color name="colorAccent">#03A9F4</color>
+
+    <color name="white">#fff</color>
+
+    <color name="button_primary">#0275d8</color>
+    <color name="button_primary_edge">#ff0172d2</color>
+    <color name="button_primary_pressed">#ff0166bd</color>
+    <color name="button_primary_pressed_edge">#ff0163b7</color>
+    <color name="button_primary_disabled">#a50275d8</color>
+    <color name="button_primary_disabled_edge">#e70275d8</color>
 </resources>
