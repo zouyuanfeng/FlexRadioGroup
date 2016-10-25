@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:orientation="vertical">
 
         <include layout="@layout/activity_title" />
@@ -43,6 +44,7 @@
                     android:background="@color/white"
                     android:padding="10dp"
                     android:text="筛选"
+                    android:textColor="@color/black87"
                     android:textSize="16dp" />
 
                 <LinearLayout
@@ -55,16 +57,19 @@
                     android:padding="10dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_price"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="价格（元）" />
+                        android:drawableRight="@drawable/ic_arrow_drop_up_black_24dp"
+                        android:text="价格（元）"
+                        android:textColor="#000" />
 
 
                     <com.itzyf.flexradiogroup.FlexRadioGroup
                         android:id="@+id/fbl_filter_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         app:flexWrap="wrap" />
 
                 </LinearLayout>
@@ -78,16 +83,19 @@
                     android:padding="10dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_type"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="车型" />
+                        android:drawableRight="@drawable/ic_arrow_drop_up_black_24dp"
+                        android:text="车型"
+                        android:textColor="@color/black87" />
 
 
                     <com.itzyf.flexradiogroup.FlexRadioGroup
                         android:id="@+id/fbl_filter_type"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
                         app:flexWrap="wrap" />
 
 
@@ -102,16 +110,19 @@
                     android:padding="10dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_structure"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="结构" />
+                        android:drawableRight="@drawable/ic_arrow_drop_up_black_24dp"
+                        android:text="结构"
+                        android:textColor="@color/black87" />
 
 
                     <com.itzyf.flexradiogroup.FlexRadioGroup
                         android:id="@+id/fbl_filter_structure"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
                         app:flexWrap="wrap" />
                 </LinearLayout>
 

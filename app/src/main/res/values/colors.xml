@@ -13,4 +13,9 @@
     <color name="button_primary_pressed_edge">#ff0163b7</color>
     <color name="button_primary_disabled">#a50275d8</color>
     <color name="button_primary_disabled_edge">#e70275d8</color>
+
+    <!--Primary text-->
+    <color name="black87">#DD000000</color>
+    <!--Secondary text-->
+    <color name="black54">#89000000</color>
 </resources>

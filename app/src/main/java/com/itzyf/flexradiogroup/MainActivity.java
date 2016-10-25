@@ -1,5 +1,6 @@
 package com.itzyf.flexradiogroup;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -7,17 +8,20 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Animation.AnimationListener {
     private boolean mProtectFromCheckedChange = false;
 
     private DrawerLayout mDrawerLayout;
@@ -28,6 +32,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String filterPrices[] = {"0-15万", "15万-25万", "25万-35万", "35万-不限"};
     private String filterTypes[] = {"紧凑型", "经济型", "商务型", "豪华型", "跑车", "SUV", "微面"};
     private String filterStructures[] = {"两厢", "三厢", "掀背", "旅行版", "敞篷车"};
+
+    private Animation animCollapse, animExpand;
+
+    private SparseBooleanArray isCollapses; //是否收缩
+
+    private Drawable dropUp, dropDown;
+
+    private int currentAnimId;//当前正在执行动画的ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +60,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_clear).setOnClickListener(this);
         findViewById(R.id.btn_submit).setOnClickListener(this);
 
+        isCollapses = new SparseBooleanArray();
+
         createRadioButton(filterPrices, fblFilterPrice);
         createRadioButton(filterTypes, fblFilterType);
         createRadioButton(filterStructures, fblFilterStructure);
+
+        findViewById(R.id.tv_price).setOnClickListener(this);
+        findViewById(R.id.tv_type).setOnClickListener(this);
+        findViewById(R.id.tv_structure).setOnClickListener(this);
+
+        animExpand = AnimationUtils.loadAnimation(this, R.anim.expand);
+        animExpand.setAnimationListener(this);
+
+        animCollapse = AnimationUtils.loadAnimation(this, R.anim.collapse);
+        animCollapse.setAnimationListener(this);
+
+
     }
 
     public void initToolbar(@NonNull String title) {
@@ -94,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
+        isCollapses.put(group.getId(), false);
     }
 
     @Override
@@ -118,7 +145,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     sb.append(rbStructure.getText().toString()).append("\n");
                 text.setText(sb.toString());
                 break;
+            case R.id.tv_type:
+                startAnim(fblFilterType, (TextView) v);
+                break;
+            case R.id.tv_price:
+                startAnim(fblFilterPrice, (TextView) v);
+                break;
+            case R.id.tv_structure:
+                startAnim(fblFilterStructure, (TextView) v);
+                break;
         }
+    }
+
+
+    /**
+     * 设置箭头
+     */
+    private void setArrow(TextView view, boolean isCollapse) {
+        if (!isCollapse) {
+            if (dropUp == null) {
+                dropUp = getResources().getDrawable(R.drawable.ic_arrow_drop_up_black_24dp);
+                dropUp.setBounds(0, 0, dropUp.getMinimumWidth(), dropUp.getMinimumHeight());
+            }
+            view.setCompoundDrawables(null, null, dropUp, null);
+        } else {
+            if (dropDown == null) {
+                dropDown = getResources().getDrawable(R.drawable.ic_arrow_drop_down_black_24dp);
+                dropDown.setBounds(0, 0, dropDown.getMinimumWidth(), dropDown.getMinimumHeight());
+            }
+            view.setCompoundDrawables(null, null, dropDown, null);
+        }
+
+
+    }
+
+    /**
+     * 重新设置isCollapse值，保存当前动画状态
+     * 启动动画
+     *
+     * @param group
+     */
+    private void startAnim(FlexRadioGroup group, TextView view) {
+        currentAnimId = group.getId();
+        boolean isCollapse = !isCollapses.get(group.getId());
+        isCollapses.put(group.getId(), isCollapse);
+        if (isCollapse) {
+            group.startAnimation(animCollapse);
+        } else {
+            group.startAnimation(animExpand);
+        }
+        setArrow(view, isCollapse);
     }
 
     @Override
@@ -146,4 +222,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    @Override
+    public void onAnimationStart(Animation animation) {
+        if (!isCollapses.get(currentAnimId)) {
+            findViewById(currentAnimId).setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        if (isCollapses.get(currentAnimId)) {
+            findViewById(currentAnimId).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+
+    }
 }

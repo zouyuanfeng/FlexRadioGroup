@@ -4,4 +4,5 @@
     android:layout_height="wrap_content"
     android:background="@drawable/filter_select"
     android:button="@null"
+    android:textColor="@color/black54"
     android:gravity="center" />
