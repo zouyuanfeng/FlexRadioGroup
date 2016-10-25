@@ -112,6 +112,12 @@ public class FlexRadioGroup extends FlexboxLayout {
         public void onCheckedChanged(@IdRes int checkedId);
     }
 
+    @IdRes
+    public int getCheckedRadioButtonId() {
+        return mCheckedId;
+    }
+
+
     /**
      * 此监听器在{@link PassThroughHierarchyChangeListener#onChildViewAdded}中设置了监听
      * 当RadioButton被点击时调用{@link CheckedStateTracker#onCheckedChanged}方法

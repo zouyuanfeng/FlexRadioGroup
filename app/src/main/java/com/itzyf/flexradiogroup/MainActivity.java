@@ -2,40 +2,81 @@ package com.itzyf.flexradiogroup;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
 
-public class MainActivity extends AppCompatActivity {
-    private String filterPrices[] = {"0-15万", "15万-25万", "25万-35万", "35万-50万", "50万-不限"};
-    private FlexRadioGroup frgLabel;
-
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private boolean mProtectFromCheckedChange = false;
+
+    private DrawerLayout mDrawerLayout;
+
+    private FlexRadioGroup fblFilterPrice, fblFilterType, fblFilterStructure;
+    private TextView text;
+
+    private String filterPrices[] = {"0-15万", "15万-25万", "25万-35万", "35万-不限"};
+    private String filterTypes[] = {"紧凑型", "经济型", "商务型", "豪华型", "跑车", "SUV", "微面"};
+    private String filterStructures[] = {"两厢", "三厢", "掀背", "旅行版", "敞篷车"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        frgLabel = (FlexRadioGroup) findViewById(R.id.frg_label);
-        int margin = DensityUtils.dp2px(this, 10);
-        for (String price : filterPrices) {
-            RadioButton rb = (RadioButton) getLayoutInflater().inflate(R.layout.item_label, null);
-            rb.setText(price);
-            FlexboxLayout.LayoutParams lp = new FlexRadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(margin, margin / 2, margin, margin / 2);
-            rb.setLayoutParams(lp);
+        initToolbar("筛选菜单");
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawer_layout);
+        fblFilterPrice = (FlexRadioGroup) findViewById(R.id.fbl_filter_price);
+        fblFilterType = (FlexRadioGroup) findViewById(R.id.fbl_filter_type);
+        fblFilterStructure = (FlexRadioGroup) findViewById(R.id.fbl_filter_structure);
+        text = (TextView) findViewById(R.id.text);
+        findViewById(R.id.ll_filter).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        findViewById(R.id.btn_clear).setOnClickListener(this);
+        findViewById(R.id.btn_submit).setOnClickListener(this);
 
-            frgLabel.addView(rb);
+        createRadioButton(filterPrices, fblFilterPrice);
+        createRadioButton(filterTypes, fblFilterType);
+        createRadioButton(filterStructures, fblFilterStructure);
+    }
+
+    public void initToolbar(@NonNull String title) {
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar == null)
+            throw new IllegalArgumentException("未引入toolbar_head布局文件");
+        mToolbar.setTitle(title);
+        setSupportActionBar(mToolbar);
+    }
+
+    private void createRadioButton(String[] filters, final FlexRadioGroup group) {
+        float margin = DensityUtils.dp2px(this, 85);
+        float width = DensityUtils.getWidth(this);
+        for (String filter : filters) {
+            RadioButton rb = (RadioButton) getLayoutInflater().inflate(R.layout.item_label, null);
+            rb.setText(filter);
+            FlexboxLayout.LayoutParams lp = new FlexboxLayout.LayoutParams((int) (width - margin) / 3, ViewGroup.LayoutParams.WRAP_CONTENT);
+            rb.setLayoutParams(lp);
+            group.addView(rb);
 
             /**
              * 下面两个监听器用于点击两次可以清除当前RadioButton的选中
              * 点击RadioButton后，{@link FlexRadioGroup#OnCheckedChangeListener}先回调，然后再回调{@link View#OnClickListener}
              * 如果当前的RadioButton已经被选中时，不会回调OnCheckedChangeListener方法，故判断没有回调该方法且当前RadioButton确实被选中时清除掉选中
              */
-            frgLabel.setOnCheckedChangeListener(new FlexRadioGroup.OnCheckedChangeListener() {
+            group.setOnCheckedChangeListener(new FlexRadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(@IdRes int checkedId) {
                     mProtectFromCheckedChange = true;
@@ -45,10 +86,61 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (!mProtectFromCheckedChange && ((RadioButton) v).isChecked()) {
-                        frgLabel.clearCheck();
+                        group.clearCheck();
                     } else mProtectFromCheckedChange = false;
                 }
             });
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_clear:
+                fblFilterPrice.clearCheck();
+                fblFilterType.clearCheck();
+                fblFilterStructure.clearCheck();
+                break;
+            case R.id.btn_submit:
+                mDrawerLayout.closeDrawers();
+                StringBuilder sb = new StringBuilder();
+                RadioButton rbPrice = (RadioButton) findViewById(fblFilterPrice.getCheckedRadioButtonId());
+                if (rbPrice != null)
+                    sb.append(rbPrice.getText().toString()).append("\n");
+                RadioButton rbType = (RadioButton) findViewById(fblFilterType.getCheckedRadioButtonId());
+                if (rbType != null)
+                    sb.append(rbType.getText().toString()).append("\n");
+                RadioButton rbStructure = (RadioButton) findViewById(fblFilterStructure.getCheckedRadioButtonId());
+                if (rbStructure != null)
+                    sb.append(rbStructure.getText().toString()).append("\n");
+                text.setText(sb.toString());
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
+            mDrawerLayout.closeDrawers();
+        else
+            super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_filter:
+                mDrawerLayout.openDrawer(GravityCompat.END);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 }
