@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void createRadioButton(String[] filters, final FlexRadioGroup group) {
+        /**
+         *  64dp菜单的边距{@link DrawerLayout#MIN_DRAWER_MARGIN}+0.5px阴影+10dp*2为菜单内部的padding
+         */
         float margin = DensityUtils.dp2px(this, 85);
         float width = DensityUtils.getWidth(this);
         for (String filter : filters) {
