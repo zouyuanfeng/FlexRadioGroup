@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -51,12 +50,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fblFilterType = (FlexRadioGroup) findViewById(R.id.fbl_filter_type);
         fblFilterStructure = (FlexRadioGroup) findViewById(R.id.fbl_filter_structure);
         text = (TextView) findViewById(R.id.text);
-        findViewById(R.id.ll_filter).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
         findViewById(R.id.btn_clear).setOnClickListener(this);
         findViewById(R.id.btn_submit).setOnClickListener(this);
 
