@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fblFilterType = (FlexRadioGroup) findViewById(R.id.fbl_filter_type);
         fblFilterStructure = (FlexRadioGroup) findViewById(R.id.fbl_filter_structure);
         text = (TextView) findViewById(R.id.text);
+
         findViewById(R.id.btn_clear).setOnClickListener(this);
         findViewById(R.id.btn_submit).setOnClickListener(this);
 
